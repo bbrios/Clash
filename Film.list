@@ -1,0 +1,12 @@
+#第三方影视网站
+#更新： 2023/9/26 17点57分
+
+##DOMAIN-SUFFIX,google.com  #匹配域名后缀
+##DOMAIN-KEYWORD,google     #匹配域名关键字
+##DOMAIN,google.com         #匹配域名
+
+
+#异世界动漫
+DOMAIN-SUFFIX,lldm.net
+
+
