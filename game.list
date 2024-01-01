@@ -11,3 +11,11 @@ DOMAIN,auth.sandstorm.game
 DOMAIN-SUFFIX,mod.io
 DOMAIN,mod.io
 
+
+
+DOMAIN-KEYWORD,epicgames
+DOMAIN-KEYWORD,epicgame
+DOMAIN-KEYWORD,steam
+DOMAIN-SUFFIX,epicgames.com
+
+
