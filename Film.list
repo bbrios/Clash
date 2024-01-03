@@ -24,3 +24,10 @@ DOMAIN-SUFFIX,kuaikan-play2.com
 DOMAIN-SUFFIX,media.ulivetv.net
 DOMAIN-SUFFIX,cloudfront.net
 DOMAIN-SUFFIX,ts.ulivetv.net
+
+#H动漫
+DOMAIN-SUFFIX,hanime1.me
+DOMAIN,hanime1.me
+DOMAIN-SUFFIX,vdownload.hembed.com
+DOMAIN-KEYWORD,hembed.com
+
