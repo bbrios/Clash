@@ -13,6 +13,7 @@ DOMAIN,mod.io
 DOMAIN-KEYWORD,steam
 DOMAIN-KEYWORD,steamcontent
 DOMAIN-SUFFIX,steamcontent.com
+DOMAIN-SUFFIX,api.wyjsq.com
 
 
 
@@ -23,4 +24,4 @@ DOMAIN-KEYWORD,steam
 DOMAIN-SUFFIX,epicgames.com
 
 
-DOMAIN-SUFFIX,api.wyjsq.com
+
