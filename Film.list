@@ -7,10 +7,14 @@
 
 
 #异世界动漫
-#DOMAIN-SUFFIX,lldm.net
-#DOMAIN-SUFFIX,sbdm.cc
-#DOMAIN-SUFFIX,mikudm.com
-#DOMAIN-SUFFIX,dm.net
+DOMAIN-SUFFIX,lldm.net
+DOMAIN-SUFFIX,sbdm.cc
+DOMAIN-SUFFIX,mikudm.com
+DOMAIN-SUFFIX,dm.net
+DOMAIN-SUFFIX,bf.sbdm.cc
+DOMAIN-SUFFIX,www.mikudm.com
+DOMAIN-SUFFIX,r2.hfyrw.com
+
 #555电影
 DOMAIN-SUFFIX,555dy.vip
 
