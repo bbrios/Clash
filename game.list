@@ -16,7 +16,14 @@ DOMAIN-SUFFIX,steamcontent.com
 DOMAIN-SUFFIX,api.wyjsq.com
 
 
-
+;地狱潜兵2
+DOMAIN-SUFFIX,azure.com
+DOMAIN-SUFFIX,thehelldiversgame.com
+DOMAIN-SUFFIX,playfabapi.com
+DOMAIN-SUFFIX,cloudapp.azure.com
+DOMAIN-SUFFIX,mgr.gameguard.co.kr
+DOMAIN-SUFFIX,steamserver.net
+DOMAIN-SUFFIX,service.signalr.net
 
 DOMAIN-KEYWORD,epicgames
 DOMAIN-KEYWORD,epicgame
