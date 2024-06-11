@@ -1,0 +1,241 @@
+# 注意:该配置文件为meta内核专用,不适合其他clash内核
+# meta内核安卓版/openclash均可以无缝衔接/win系统等自行更换内核测试
+ipv6: false
+allow-lan: true
+mixed-port: 7893
+redir-port: 7892
+tproxy-port: 7895
+port: 7890
+socks-port: 7891
+mode: rule
+log-level: info
+unified-delay: true
+tcp-concurrent: true
+external-controller: 0.0.0.0:9090
+bind-address: "*"
+
+find-process-mode: strict
+global-client-fingerprint: chrome
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+  auto-route: true
+  auto-detect-interface: true
+
+dns:
+  enable: true
+  listen: 0.0.0.0:7874
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*"
+    - "+.lan"
+    - "+.local"
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 180.76.76.76
+  nameserver:
+    - https://223.5.5.5/dns-query#h3=true
+    - https://223.6.6.6/dns-query#h3=true
+    - https://dns.alidns.com/dns-query
+    - tls://dns.alidns.com
+    - tls://dot.360.cn
+    - https://doh.360.cn/dns-query
+    - https://dns.pub/dns-query
+    - tls://dot.pub
+    - https://doh.dns.sb/dns-query
+
+
+
+
+
+
+
+# 代理组
+## 代理组策略
+pc: &pc {type: http, behavior: classical, interval: 86400, format: yaml}
+pd: &pd {type: http, behavior: domain, interval: 86400, format: yaml}
+pi: &pi {type: http, behavior: ipcidr, interval: 86400, format: yaml}
+pq: &pq {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 600, format: yaml}}
+## 策略锚点
+o1: &o1 {type: select, proxies: [DIRECT, 📡 BBR]}
+o2: &o2 {type: select, proxies: [DIRECT, 🚀 Proxy]}
+
+# 订阅信息
+## url里填写自己的机场订阅链接,名称不能重复。填写在引号之间，每个provider填写一个机场订阅链接，单机场的删除多余的provider
+proxy-providers:
+   机场1:
+    <<: *pq
+    url: "xxx" # 在双引号之间填入机场订阅链接
+   机场2:
+    <<: *pq
+    url: "xxx" # 在双引号之间填入机场订阅链接
+   机场3:
+    <<: *pq
+    url: "xxx" # 在双引号之间填入机场订阅链接
+
+
+## 订阅合集锚点
+pp: &pp {use: [机场1,机场2,机场3]}
+
+# 策略组
+## 日常策略组
+proxy-groups:
+  - {name: 📡 BBR, type: fallback, <<: *pp}
+  - {name: 🚀 Proxy, type: select, <<: *o1}
+  - {name: 🎮 Game,  <<: *o2}
+  - {name: 🐟 Final, <<: *o2}
+## 地区策略组
+#  - {name: 🇭🇰 HK, type: select, include-all-providers: true, filter: "(?i)港|hk|hongkong|hong kong"}
+#  - {name: 🇸🇬 SG, type: select, include-all-providers: true, filter: "(?i)新加坡|sg|singapore|狮城"}
+#  - {name: 🇺🇸 US, type: select, include-all-providers: true, filter: "(?i)美|us|unitedstates|united states"}
+#  - {name: 🇯🇵 JP, type: select, include-all-providers: true, filter: "(?i)日|jp|japan"}
+
+# 规则分流
+rules:
+  ## 自定义分流
+
+  ## 日常分流
+  - IN-TYPE,INNER,DIRECT
+  - DOMAIN-SUFFIX,googleapis.cn,🚀 Proxy
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🚀 Proxy
+  - DOMAIN-SUFFIX,wechat.com,DIRECT
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,tencent.com,DIRECT
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,Unban,DIRECT
+  - RULE-SET,Telegram,🚀 Proxy
+  - RULE-SET,OpenAi,🚀 Proxy
+  - RULE-SET,YouTube,🚀 Proxy
+  - RULE-SET,Disney,🚀 Proxy
+  - RULE-SET,Netflix,🚀 Proxy
+  - RULE-SET,ProxyMedia,🚀 Proxy
+  - RULE-SET,Download,DIRECT
+  - RULE-SET,ChinaMedia,DIRECT
+  - RULE-SET,Copilot,🚀 Proxy
+  - RULE-SET,Microsoft,DIRECT
+  - RULE-SET,Apple,DIRECT
+  - RULE-SET,Geosite_cn,DIRECT
+  - RULE-SET,Geosite_private,DIRECT
+  - RULE-SET,ChinaDomain,DIRECT
+  - RULE-SET,Geolocation-!cn,🚀 Proxy
+  - RULE-SET,Category-games,🎮 Game
+  - RULE-SET,Geoip_cn,DIRECT,no-resolve
+  - RULE-SET,Geoip_private,DIRECT,no-resolve
+  - RULE-SET,ChinaCompanyIp,DIRECT,no-resolve
+  - RULE-SET,ChinaIp,DIRECT,no-resolve
+  - MATCH,🐟 Final
+
+# 规则来源
+rule-providers:
+  Geolocation-!cn:
+    <<: *pd
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.yaml"
+  LocalAreaNetwork:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/LocalAreaNetwork.yaml"
+  Unban:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/UnBan.yaml"
+  BanEasyListChina:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyListChina.yaml"
+  BanAD:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanAD.yaml"
+  BanEasyList:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyList.yaml"
+  BanEasyPrivacy:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyPrivacy.yaml"
+  Telegram:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Telegram.yaml"
+  Twitter:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Twitter.yaml"
+  OpenAi:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/OpenAi.yaml"
+  YouTube:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/YouTube.yaml"
+  Netflix:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Netflix.yaml"
+  Disney:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml"
+  Bahamut:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Bahamut.yaml"
+  ProxyMedia:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ProxyMedia.yaml"
+  Category-games:
+    <<: *pd
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.yaml"
+  Bilibili:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Bilibili.yaml"
+  Download:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Download.yaml"
+  ChinaMedia:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaMedia.yaml"
+  GoogleFCM:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/GoogleFCM.yaml"
+  Microsoft:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Microsoft.yaml"
+  Copilot:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Copilot/Copilot_No_Resolve.yaml"
+  Apple:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Apple.yaml"
+  Geosite_cn:
+    <<: *pd
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.yaml"
+  Geosite_private:
+    <<: *pd
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.yaml"
+  ChinaDomain:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaDomain.yaml"
+  Geoip_cn:
+    <<: *pi
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.yaml"
+  Geoip_private:
+    <<: *pi
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.yaml"
+  ChinaCompanyIp:
+    <<: *pi
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaCompanyIp.yaml"
+  ChinaIp:
+    <<: *pi
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaIp.yaml"
