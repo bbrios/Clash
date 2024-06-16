@@ -54,17 +54,15 @@ dns:
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
+    - 182.254.116.116
+    - 114.114.114.114
     - 180.76.76.76
   nameserver:
-    - https://223.5.5.5/dns-query#h3=true
-    - https://223.6.6.6/dns-query#h3=true
-    - https://dns.alidns.com/dns-query
-    - tls://dns.alidns.com
-    - tls://dot.360.cn
-    - https://doh.360.cn/dns-query
-    - https://dns.pub/dns-query
-    - tls://dot.pub
-    - https://doh.dns.sb/dns-query
+    - "tls://223.5.5.5"
+    - "tls://114.114.114.114"
+    - "tls://dns.alidns.com"
+    - "https://doh.pub/dns-query"
+    - "https://dns.alidns.com/dns-query"
 
 
 
@@ -72,12 +70,10 @@ dns:
 
 
 
-# 代理组
-## 代理组策略
-pc: &pc {type: http, behavior: classical, interval: 86400, format: yaml}
-pd: &pd {type: http, behavior: domain, interval: 86400, format: yaml}
-pi: &pi {type: http, behavior: ipcidr, interval: 86400, format: yaml}
-pq: &pq {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 600, format: yaml}}
+## 代理组策略  测速URL
+
+pq: &pq {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 400, format: yaml}}
+
 ## 策略锚点
 o1: &o1 {type: select, proxies: [DIRECT, 📡 BBR]}
 o2: &o2 {type: select, proxies: [DIRECT, 🚀 Proxy]}
@@ -91,21 +87,21 @@ proxy-providers:
    机场2:
     <<: *pq
     url: "xxx" # 在双引号之间填入机场订阅链接
-   机场3:
-    <<: *pq
-    url: "xxx" # 在双引号之间填入机场订阅链接
+   
 
 
 ## 订阅合集锚点
-pp: &pp {use: [机场1,机场2,机场3]}
+pp: &pp {use: [机场1,机场2]}
+
+
 
 # 策略组
-## 日常策略组
+## 添加创建策略组
 proxy-groups:
-  - {name: 📡 BBR, type: fallback, <<: *pp}
-  - {name: 🚀 Proxy, type: select, <<: *o1}
-  - {name: 🎮 Game,  <<: *o2}
-  - {name: 🐟 Final, <<: *o2}
+  - {name: 📡 BBR, <<: *o2}                     #o2引用策略锚点
+  - {name: 🚀 Proxy, type: select, <<: *pp}     #PP引用订阅合集锚点包含机场所有节点
+  - {name: 🎮 Game,  <<: *o1}
+  - {name: 🐟 Final, <<: *o1}
 ## 地区策略组
 #  - {name: 🇭🇰 HK, type: select, include-all-providers: true, filter: "(?i)港|hk|hongkong|hong kong"}
 #  - {name: 🇸🇬 SG, type: select, include-all-providers: true, filter: "(?i)新加坡|sg|singapore|狮城"}
@@ -114,38 +110,52 @@ proxy-groups:
 
 # 规则分流
 rules:
-  ## 自定义分流
+  ## 自定义rule-providers分组，名称分配策略组
 
-  ## 日常分流
   - IN-TYPE,INNER,DIRECT
-  - DOMAIN-SUFFIX,googleapis.cn,🚀 Proxy
-  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🚀 Proxy
+  - RULE-SET,LocalAreaNetwork,DIRECT
   - DOMAIN-SUFFIX,wechat.com,DIRECT
   - DOMAIN-SUFFIX,qq.com,DIRECT
   - DOMAIN-SUFFIX,tencent.com,DIRECT
   - RULE-SET,LocalAreaNetwork,DIRECT
   - RULE-SET,Unban,DIRECT
-  - RULE-SET,Telegram,🚀 Proxy
-  - RULE-SET,OpenAi,🚀 Proxy
-  - RULE-SET,YouTube,🚀 Proxy
-  - RULE-SET,Disney,🚀 Proxy
-  - RULE-SET,Netflix,🚀 Proxy
-  - RULE-SET,ProxyMedia,🚀 Proxy
+
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,📡 BBR   #国行手机内置的play服务及play商店,下载app似乎是走的该域名
+  - DOMAIN-SUFFIX,googleapis.cn,📡 BBR
+  - RULE-SET,Telegram,📡 BBR
+  - RULE-SET,OpenAi,📡 BBR
+  - RULE-SET,YouTube,📡 BBR
+  - RULE-SET,Disney,📡 BBR
+  - RULE-SET,Netflix,📡 BBR
+  - RULE-SET,ProxyMedia,📡 BBR
+  - RULE-SET,Copilot,📡 BBR
+  - RULE-SET,Geolocation-!cn,📡 BBR
+  - RULE-SET,Apple,📡 BBR
+  - RULE-SET,Microsoft,📡 BBR
   - RULE-SET,Download,DIRECT
   - RULE-SET,ChinaMedia,DIRECT
-  - RULE-SET,Copilot,🚀 Proxy
-  - RULE-SET,Microsoft,DIRECT
-  - RULE-SET,Apple,DIRECT
+
+
+
+  - RULE-SET,Geolocation-!cn,📡 BBR
   - RULE-SET,Geosite_cn,DIRECT
   - RULE-SET,Geosite_private,DIRECT
   - RULE-SET,ChinaDomain,DIRECT
-  - RULE-SET,Geolocation-!cn,🚀 Proxy
   - RULE-SET,Category-games,🎮 Game
   - RULE-SET,Geoip_cn,DIRECT,no-resolve
   - RULE-SET,Geoip_private,DIRECT,no-resolve
   - RULE-SET,ChinaCompanyIp,DIRECT,no-resolve
   - RULE-SET,ChinaIp,DIRECT,no-resolve
-  - MATCH,🐟 Final
+  - MATCH,🐟 Final        #漏网之鱼
+
+
+
+
+## 代理组策略类型简写，URL必须符合behavior
+
+pc: &pc {type: http, behavior: classical, interval: 86400, format: yaml}
+pd: &pd {type: http, behavior: domain, interval: 86400, format: yaml}
+pi: &pi {type: http, behavior: ipcidr, interval: 86400, format: yaml}
 
 # 规则来源
 rule-providers:
