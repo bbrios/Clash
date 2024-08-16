@@ -75,8 +75,9 @@ dns:
 pq: &pq {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 400, format: yaml}}
 
 ## 策略锚点
-o1: &o1 {type: select, proxies: [DIRECT, 📡 BBR]}
-o2: &o2 {type: select, proxies: [DIRECT, 🚀 Proxy]}
+o1: &o1 {type: select, proxies: [DIRECT,BBR]}
+
+
 
 # 订阅信息
 ## url里填写自己的机场订阅链接,名称不能重复。填写在引号之间，每个provider填写一个机场订阅链接，单机场的删除多余的provider
@@ -94,14 +95,13 @@ proxy-providers:
 pp: &pp {use: [机场1,机场2]}
 
 
-
 # 策略组
 ## 添加创建策略组
 proxy-groups:
-  - {name: 📡 BBR, <<: *o2}                     #o2引用策略锚点
-  - {name: 🚀 Proxy, type: select, <<: *pp}     #PP引用订阅合集锚点包含机场所有节点
-  - {name: 🎮 Game,  <<: *o1}
-  - {name: 🐟 Final, <<: *o1}
+
+  - {name: BBR, type: select, <<: *pp}     #PP引用订阅合集锚点包含机场所有节点
+  - {name: GAMES,  <<: *o1}
+  - {name: OPS, <<: *o1}
 ## 地区策略组
 #  - {name: 🇭🇰 HK, type: select, include-all-providers: true, filter: "(?i)港|hk|hongkong|hong kong"}
 #  - {name: 🇸🇬 SG, type: select, include-all-providers: true, filter: "(?i)新加坡|sg|singapore|狮城"}
@@ -112,46 +112,42 @@ proxy-groups:
 rules:
   ## 自定义rule-providers分组，名称分配策略组
 
-  - IN-TYPE,INNER,DIRECT
-  - RULE-SET,LocalAreaNetwork,DIRECT
-  - DOMAIN-SUFFIX,wechat.com,DIRECT
-  - DOMAIN-SUFFIX,qq.com,DIRECT
-  - DOMAIN-SUFFIX,tencent.com,DIRECT
-  - RULE-SET,LocalAreaNetwork,DIRECT
-  - RULE-SET,Unban,DIRECT
 
-  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,📡 BBR   #国行手机内置的play服务及play商店,下载app似乎是走的该域名
-  - DOMAIN-SUFFIX,googleapis.cn,📡 BBR
-  - RULE-SET,Telegram,📡 BBR
-  - RULE-SET,OpenAi,📡 BBR
-  - RULE-SET,YouTube,📡 BBR
-  - RULE-SET,Disney,📡 BBR
-  - RULE-SET,Netflix,📡 BBR
-  - RULE-SET,ProxyMedia,📡 BBR
-  - RULE-SET,Copilot,📡 BBR
-  - RULE-SET,Geolocation-!cn,📡 BBR
-  - RULE-SET,Apple,📡 BBR
-  - RULE-SET,Microsoft,📡 BBR
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,BBR   #国行手机内置的play服务及play商店,下载app似乎是走的该域名
+  - DOMAIN-SUFFIX,googleapis.cn,BBR
+  - RULE-SET,Telegram,BBR
+  - RULE-SET,OpenAi,BBR
+  - RULE-SET,YouTube,BBR
+  - RULE-SET,Disney,BBR
+  - RULE-SET,Netflix,BBR
+  - RULE-SET,ProxyMedia,BBR
+  - RULE-SET,Copilot,BBR
+  - RULE-SET,Geolocation-!cn,BBR
+  - RULE-SET,Apple,BBR
+  - RULE-SET,Microsoft,BBR
+  - RULE-SET,Geolocation-!cn,BBR
+
+
+
+
   - RULE-SET,Download,DIRECT
   - RULE-SET,ChinaMedia,DIRECT
-
-
-
-  - RULE-SET,Geolocation-!cn,📡 BBR
   - RULE-SET,Geosite_cn,DIRECT
   - RULE-SET,Geosite_private,DIRECT
   - RULE-SET,ChinaDomain,DIRECT
-  - RULE-SET,Category-games,🎮 Game
   - RULE-SET,Geoip_cn,DIRECT,no-resolve
   - RULE-SET,Geoip_private,DIRECT,no-resolve
   - RULE-SET,ChinaCompanyIp,DIRECT,no-resolve
   - RULE-SET,ChinaIp,DIRECT,no-resolve
-  - MATCH,🐟 Final        #漏网之鱼
+
+  - RULE-SET,Category-games,GAMES
+
+  - MATCH,OPS        #漏网之鱼
 
 
 
 
-## 代理组策略类型简写，URL必须符合behavior
+## 代理组策略类型简写，URL必须符合 behavior
 
 pc: &pc {type: http, behavior: classical, interval: 86400, format: yaml}
 pd: &pd {type: http, behavior: domain, interval: 86400, format: yaml}
@@ -165,21 +161,6 @@ rule-providers:
   LocalAreaNetwork:
     <<: *pc
     url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/LocalAreaNetwork.yaml"
-  Unban:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/UnBan.yaml"
-  BanEasyListChina:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyListChina.yaml"
-  BanAD:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanAD.yaml"
-  BanEasyList:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyList.yaml"
-  BanEasyPrivacy:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/BanEasyPrivacy.yaml"
   Telegram:
     <<: *pc
     url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Telegram.yaml"
