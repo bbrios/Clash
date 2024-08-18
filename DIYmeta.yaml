@@ -114,7 +114,7 @@ rules:
 
 
   - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,BBR   #国行手机内置的play服务及play商店,下载app似乎是走的该域名
-  - DOMAIN-SUFFIX,googleapis.cn,BBR
+  - DOMAIN-SUFFIX,googleapis.cn,BBR           #谷歌商店下载问题
   - RULE-SET,Telegram,BBR
   - RULE-SET,OpenAi,BBR
   - RULE-SET,YouTube,BBR
@@ -135,13 +135,10 @@ rules:
   - RULE-SET,Geosite_cn,DIRECT
   - RULE-SET,Geosite_private,DIRECT
   - RULE-SET,ChinaDomain,DIRECT
-  - RULE-SET,Geoip_cn,DIRECT,no-resolve
   - RULE-SET,Geoip_private,DIRECT,no-resolve
   - RULE-SET,ChinaCompanyIp,DIRECT,no-resolve
   - RULE-SET,ChinaIp,DIRECT,no-resolve
-
-  - RULE-SET,Category-games,GAMES
-
+  - RULE-SET,Geoip_cn,DIRECT,no-resolve
   - MATCH,OPS        #漏网之鱼
 
 
