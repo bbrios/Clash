@@ -99,7 +99,7 @@ pp: &pp {use: [机场1,机场2]}
 ## 添加创建策略组
 proxy-groups:
 
-  - {name: BBR, type: select, <<: *pp}     #PP引用订阅合集锚点包含机场所有节点
+  - {name: BBR, type: select, <<: *pp}     #PP引用订阅合集锚点,包含机场所有节点
   - {name: GAMES,  <<: *o1}
   - {name: OPS, <<: *o1}
 ## 地区策略组
@@ -111,34 +111,36 @@ proxy-groups:
 # 规则分流
 rules:
   ## 自定义rule-providers分组，名称分配策略组
-
-
   - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,BBR   #国行手机内置的play服务及play商店,下载app似乎是走的该域名
-  - DOMAIN-SUFFIX,googleapis.cn,BBR           #谷歌商店下载问题
-  - RULE-SET,Telegram,BBR
+
   - RULE-SET,OpenAi,BBR
-  - RULE-SET,YouTube,BBR
-  - RULE-SET,Disney,BBR
-  - RULE-SET,Netflix,BBR
-  - RULE-SET,ProxyMedia,BBR
   - RULE-SET,Copilot,BBR
-  - RULE-SET,Geolocation-!cn,BBR
   - RULE-SET,Apple,BBR
   - RULE-SET,Microsoft,BBR
-  - RULE-SET,Geolocation-!cn,BBR
+  - RULE-SET,Telegram,BBR
+  - RULE-SET,GitHub,BBR
+  - RULE-SET,Google,BBR
+  - RULE-SET,Global,BBR
+  - RULE-SET,Global_Domain,BBR
+  - RULE-SET,GoogleFCM,BBR
 
+
+
+  
+  
+
+  - RULE-SET,games,GAMES
+
+  - RULE-SET,ChinaMaxNoMedia,DIRECT
+  - RULE-SET,ChinaMaxNoMedia_Domain,DIRECT
+  - RULE-SET,ChinaMaxNoMedia_IP,DIRECT
 
 
 
   - RULE-SET,Download,DIRECT
-  - RULE-SET,ChinaMedia,DIRECT
-  - RULE-SET,Geosite_cn,DIRECT
-  - RULE-SET,Geosite_private,DIRECT
-  - RULE-SET,ChinaDomain,DIRECT
-  - RULE-SET,Geoip_private,DIRECT,no-resolve
-  - RULE-SET,ChinaCompanyIp,DIRECT,no-resolve
-  - RULE-SET,ChinaIp,DIRECT,no-resolve
+
   - RULE-SET,Geoip_cn,DIRECT,no-resolve
+  
   - MATCH,OPS        #漏网之鱼
 
 
@@ -152,78 +154,66 @@ pi: &pi {type: http, behavior: ipcidr, interval: 86400, format: yaml}
 
 # 规则来源
 rule-providers:
-  Geolocation-!cn:
+
+
+
+  games:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Game/Game.yaml"
+
+  ChinaMaxNoMedia:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMaxNoMedia/ChinaMaxNoMedia.yaml"
+
+  ChinaMaxNoMedia_Domain:
     <<: *pd
-    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.yaml"
-  LocalAreaNetwork:
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMaxNoMedia/ChinaMaxNoMedia_Domain.yaml"
+  ChinaMaxNoMedia_IP:
+    <<: *pi
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMaxNoMedia/ChinaMaxNoMedia_Classical.yaml"
+
+  Global:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/LocalAreaNetwork.yaml"
-  Telegram:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Telegram.yaml"
-  Twitter:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Twitter.yaml"
-  OpenAi:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/OpenAi.yaml"
-  YouTube:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/YouTube.yaml"
-  Netflix:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Netflix.yaml"
-  Disney:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml"
-  Bahamut:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Bahamut.yaml"
-  ProxyMedia:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ProxyMedia.yaml"
-  Category-games:
+    url: "https://raw.githubusercontent.com/bbrios/rules_script/master/rule/Clash/Global/Global.yaml"
+
+  Global_Domain:
     <<: *pd
-    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.yaml"
-  Bilibili:
+    url: "https://raw.githubusercontent.com/bbrios/rules_script/master/rule/Clash/Global/Global_Domain.yaml"
+
+  Google:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Bilibili.yaml"
-  Download:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Download.yaml"
-  ChinaMedia:
-    <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaMedia.yaml"
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google_Resolve.yaml"
+
   GoogleFCM:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/GoogleFCM.yaml"
+    url: "https://raw.githubusercontent.com/bbrios/rules_script/master/rule/Clash/GoogleFCM/GoogleFCM.yaml"
+
+  GitHub:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitHub/GitHub.yaml"
+
   Microsoft:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Microsoft.yaml"
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Microsoft/Microsoft.yaml"
   Copilot:
     <<: *pc
     url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Copilot/Copilot_No_Resolve.yaml"
   Apple:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/Ruleset/Apple.yaml"
-  Geosite_cn:
-    <<: *pd
-    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.yaml"
-  Geosite_private:
-    <<: *pd
-    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.yaml"
-  ChinaDomain:
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple_Classical.yaml"
+
+
+  Telegram:
     <<: *pc
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaDomain.yaml"
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml"
+  OpenAi:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI_No_Resolve.yaml"
+  Download:
+    <<: *pc
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Download/Download.yaml"
+
+
   Geoip_cn:
     <<: *pi
     url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.yaml"
-  Geoip_private:
-    <<: *pi
-    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.yaml"
-  ChinaCompanyIp:
-    <<: *pi
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaCompanyIp.yaml"
-  ChinaIp:
-    <<: *pi
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ChinaIp.yaml"
